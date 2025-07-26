@@ -80,6 +80,11 @@ uint8_t RxIndex2 = 0;
 uint8_t RxFlag2 = 0;
 uint8_t ByteRcv2;
 
+uint8_t Serial_RxBuffer4[128];
+uint8_t RxIndex4 = 0;
+uint8_t RxFlag4 = 0;
+uint8_t ByteRcv4;
+
 int16_t PID_delta_CCRX=0;
 int16_t PID_delta_CCRY=0;
 uint8_t PIDflag = 0;
@@ -180,14 +185,10 @@ uint16_t Angle2CCR(uint16_t MaxAngle,uint16_t Angle)
 void ParseAndExecuteCommand(const char* buffer) {
 	if (strncmp(buffer,"detect",6) == 0)
 	{
-		if (sscanf(buffer + 6, " targetX: %f currentX: %f", &targetX,&currentX) == 2)
+		if (sscanf(buffer + 6, " targetX: %f currentX: %f targetY: %f currentY: %f", &targetX,&currentX,&targetY,&currentY) == 4)
 		{
 			CCRX_PID.Target = targetX;
 			CCRX_PID.Current= currentX;
-			PIDflag = 1;
-		}
-		if (sscanf(buffer + 6, " targetY: %f currentY: %f", &targetY,&currentY) == 2)
-		{
 			CCRY_PID.Target = targetY;
 			CCRY_PID.Current= currentY;
 			PIDflag = 1;
@@ -277,15 +278,16 @@ Error_Handler();
   MX_UART8_Init();
   MX_TIM3_Init();
   /* USER CODE BEGIN 2 */
-  HAL_TIM_PWM_Start(&htim3,TIM_CHANNEL_1);
-  HAL_TIM_PWM_Start(&htim3,TIM_CHANNEL_2);
-  __HAL_TIM_SET_COMPARE(&htim3,TIM_CHANNEL_1,Angle2CCR(270,startAngleX));
-  __HAL_TIM_SET_COMPARE(&htim3,TIM_CHANNEL_2,Angle2CCR(180,startAngleY));
+  HAL_TIM_PWM_Start(&htim4,TIM_CHANNEL_3);
+  HAL_TIM_PWM_Start(&htim4,TIM_CHANNEL_2);
+  __HAL_TIM_SET_COMPARE(&htim4,TIM_CHANNEL_3,Angle2CCR(270,startAngleX));
+  __HAL_TIM_SET_COMPARE(&htim4,TIM_CHANNEL_2,Angle2CCR(180,startAngleY));
   currentCCRX = Angle2CCR(270,startAngleX);
   currentCCRY = Angle2CCR(180,startAngleY);
 
   HAL_UART_Receive_IT(&hlpuart1, &ByteRcv1, 1);
   HAL_UART_Receive_IT(&huart2, &ByteRcv2, 1);
+  HAL_UART_Receive_IT(&huart4, &ByteRcv4, 1);
 
 
   CCRX_PID_Init(0.035,0.0008,0.1,0,0,0,0.2,0,0,15,0,0,0,0,55,-55,0);
@@ -317,20 +319,27 @@ Error_Handler();
 	    RxFlag2 = 0;
 	}
 
+	if(RxFlag2)
+	{
+		//HAL_UART_Transmit(&huart2,(uint8_t*)Serial_RxBuffer2, strlen(Serial_RxBuffer2), HAL_MAX_DELAY);
+		ParseAndExecuteCommand((char*)Serial_RxBuffer4);
+		RxFlag4 = 0;
+	}
+
 	if (PIDflag)
 	{
 		CCRX_PID_Update();
 		CCRX_PID_Update();
-		currentCCRX = __HAL_TIM_GET_COMPARE(&htim3,TIM_CHANNEL_1);
-		currentCCRY = __HAL_TIM_GET_COMPARE(&htim3,TIM_CHANNEL_2);
+		currentCCRX = __HAL_TIM_GET_COMPARE(&htim4,TIM_CHANNEL_3);
+		currentCCRY = __HAL_TIM_GET_COMPARE(&htim4,TIM_CHANNEL_2);
 		currentCCRX += CCRX_PID.DeltaCCR;
 		currentCCRY += CCRY_PID.DeltaCCR;
 		currentCCRX = (currentCCRX < maxCCRX)? currentCCRX : maxCCRX;
 		currentCCRX = (currentCCRX > minCCRX)? currentCCRX : minCCRX;
 		currentCCRY = (currentCCRY < maxCCRY)? currentCCRY : maxCCRY;
 		currentCCRY = (currentCCRY > minCCRY)? currentCCRY : minCCRY;
-		__HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_1, currentCCRX);
-		__HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_2, currentCCRY);
+		__HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_3, currentCCRX);
+		__HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_2, currentCCRY);
 		PIDflag = 0;
 	}
   }
