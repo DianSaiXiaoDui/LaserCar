@@ -18,10 +18,8 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "adc.h"
-#include "usart.h"
-#include "spi.h"
 #include "tim.h"
+#include "usart.h"
 #include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
@@ -108,7 +106,7 @@ static void MPU_Config(void);
 /* USER CODE BEGIN 0 */
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
-    if (huart == &hlpuart1)
+   /* if (huart == &hlpuart1)
     {
         uint8_t receivedChar1 = ByteRcv1;
         if (receivedChar1 == '\r')
@@ -158,7 +156,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 		}
 		HAL_UART_Receive_IT(&huart2, &ByteRcv2, 1);
 	}
-
+*/
 
     if (huart == &huart4)
     {
@@ -275,18 +273,8 @@ Error_Handler();
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_TIM2_Init();
-  MX_TIM1_Init();
   MX_TIM4_Init();
-  MX_ADC1_Init();
-  MX_TIM8_Init();
-  MX_TIM5_Init();
-  MX_LPUART1_UART_Init();
-  MX_USART2_UART_Init();
-  MX_SPI2_Init();
   MX_UART4_Init();
-  MX_UART8_Init();
-  MX_TIM3_Init();
   /* USER CODE BEGIN 2 */
   HAL_TIM_PWM_Start(&htim4,TIM_CHANNEL_3);
   HAL_TIM_PWM_Start(&htim4,TIM_CHANNEL_2);
@@ -295,14 +283,14 @@ Error_Handler();
   currentCCRX = Angle2CCR(270,startAngleX);
   currentCCRY = Angle2CCR(180,startAngleY);
 
-  HAL_UART_Receive_IT(&hlpuart1, &ByteRcv1, 1);
-  HAL_UART_Receive_IT(&huart2, &ByteRcv2, 1);
+  //HAL_UART_Receive_IT(&hlpuart1, &ByteRcv1, 1);
+  //HAL_UART_Receive_IT(&huart2, &ByteRcv2, 1);
   HAL_UART_Receive_IT(&huart4, &ByteRcv4, 1);
 
 
-  CCRX_PID_Init(0.035,0.0008,0.1,0,0,0,0.2,0,0,15,0,0,0,0,55,-55,0);
-  CCRY_PID_Init(0.035,0.0008,0.1,0,0,0,0.2,0,0,15,0,0,0,0,55,-55,0);
-  HAL_UART_Transmit(&huart2,(uint8_t*)"Successfully initialized", 24, HAL_MAX_DELAY);
+  CCRX_PID_Init(0.035,0,0,0,0,0,0.2,0,0,15,0,0,0,0,55,-55,0);
+  CCRY_PID_Init(0.035,0,0,0,0,0,0.2,0,0,15,0,0,0,0,55,-55,0);
+  //HAL_UART_Transmit(&huart4,(uint8_t*)"Successfully initialized", 24, HAL_MAX_DELAY);
 
 
 
@@ -329,7 +317,7 @@ Error_Handler();
 	    RxFlag2 = 0;
 	}
 
-	if(RxFlag2)
+	if(RxFlag4)
 	{
 		//HAL_UART_Transmit(&huart2,(uint8_t*)Serial_RxBuffer2, strlen(Serial_RxBuffer2), HAL_MAX_DELAY);
 		ParseAndExecuteCommand((char*)Serial_RxBuffer4);
@@ -381,16 +369,7 @@ void SystemClock_Config(void)
   RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
   RCC_OscInitStruct.HSIState = RCC_HSI_DIV1;
   RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
-  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
-  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
-  RCC_OscInitStruct.PLL.PLLM = 4;
-  RCC_OscInitStruct.PLL.PLLN = 9;
-  RCC_OscInitStruct.PLL.PLLP = 2;
-  RCC_OscInitStruct.PLL.PLLQ = 1;
-  RCC_OscInitStruct.PLL.PLLR = 2;
-  RCC_OscInitStruct.PLL.PLLRGE = RCC_PLL1VCIRANGE_3;
-  RCC_OscInitStruct.PLL.PLLVCOSEL = RCC_PLL1VCOMEDIUM;
-  RCC_OscInitStruct.PLL.PLLFRACN = 3072;
+  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_NONE;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
   {
     Error_Handler();
