@@ -111,9 +111,12 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
     if (huart == &hlpuart1)
     {
         uint8_t receivedChar1 = ByteRcv1;
-
+        if (receivedChar1 == '\r')
+		{
+			// 忽略\r字符
+		}
         // 检测测消息结束符（换行符）hlpuart1
-        if (receivedChar1 == '\n')
+        else if (receivedChar1 == '\n')
         {
             Serial_RxBuffer1[RxIndex1] = '\0'; // 添加字符串终止符
             RxFlag1 = 1;
@@ -131,48 +134,55 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
         HAL_UART_Receive_IT(&hlpuart1, &ByteRcv1, 1);
     }
 
+
     if (huart == &huart2)
-       {
-           uint8_t receivedChar2 = ByteRcv2;
-
-           // 检测测消息结束符（换行符）
-           if (receivedChar2 == '\n')
-           {
-               Serial_RxBuffer2[RxIndex2] = '\0'; // 添加字符串终止符
-               RxFlag2 = 1;
-               RxIndex2 = 0;
-           }
-           else
-           {
-               Serial_RxBuffer2[RxIndex2++] = receivedChar2;
-               if (RxIndex2 >= sizeof(Serial_RxBuffer2) - 1)
-               {
-                   RxIndex2 = 0; // 防止缓冲区溢出
-               }
-           }
-           // 重新启用接收中断
-           HAL_UART_Receive_IT(&huart2, &ByteRcv2, 1);
-       }
-
-/*
-    	if (huart == &huart4) {
-			uint8_t receivedChar2 = ByteRcv2;
-			if (receivedChar2 == '\r') {
-				// 忽略\r字符
-			} else if (receivedChar2 == '\n') {
-				Serial_RxBuffer2[RxIndex2] = '\0';
-				RxFlag2 = 1;
-				RxIndex2 = 0;
-			} else {
-				Serial_RxBuffer2[RxIndex2++] = receivedChar2;
-				if (RxIndex2 >= sizeof(Serial_RxBuffer2) - 1) {
-					RxIndex2 = 0;
-				}
-			}
-			HAL_UART_Receive_IT(&huart4, &ByteRcv2, 1);
+	{
+		uint8_t receivedChar2 = ByteRcv2;
+		if (receivedChar2 == '\r')
+		{
+			// 忽略\r字符
 		}
-*/
+		else if (receivedChar2 == '\n')
+		{
+			Serial_RxBuffer2[RxIndex2] = '\0';
+			RxFlag2 = 1;
+			RxIndex2 = 0;
+		}
+		else
+		{
+			Serial_RxBuffer2[RxIndex2++] = receivedChar2;
+			if (RxIndex2 >= sizeof(Serial_RxBuffer2) - 1)
+			{
+				RxIndex2 = 0;
+			}
+		}
+		HAL_UART_Receive_IT(&huart2, &ByteRcv2, 1);
+	}
 
+
+    if (huart == &huart4)
+    {
+		uint8_t receivedChar4 = ByteRcv4;
+		if (receivedChar4 == '\r')
+		{
+			// 忽略\r字符
+		}
+		else if (receivedChar4 == '\n')
+		{
+			Serial_RxBuffer4[RxIndex4] = '\0';
+			RxFlag4 = 1;
+			RxIndex4 = 0;
+		}
+		else
+		{
+			Serial_RxBuffer4[RxIndex4++] = receivedChar4;
+			if (RxIndex4 >= sizeof(Serial_RxBuffer4) - 1)
+			{
+				RxIndex4 = 0;
+			}
+		}
+		HAL_UART_Receive_IT(&huart4, &ByteRcv4, 1);
+    }
 }
 
 uint16_t Angle2CCR(uint16_t MaxAngle,uint16_t Angle)
