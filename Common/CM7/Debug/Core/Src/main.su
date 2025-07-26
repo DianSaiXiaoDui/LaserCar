@@ -1,0 +1,7 @@
+../Core/Src/main.c:104:6:HAL_UART_RxCpltCallback	24	static
+../Core/Src/main.c:173:10:Angle2CCR	16	static
+../Core/Src/main.c:180:6:ParseAndExecuteCommand	24	static
+../Core/Src/main.c:200:5:main	32	static,ignoring_inline_asm
+../Core/Src/main.c:340:6:SystemClock_Config	120	static
+../Core/Src/main.c:401:6:MPU_Config	24	static
+../Core/Src/main.c:432:6:Error_Handler	4	static,ignoring_inline_asm

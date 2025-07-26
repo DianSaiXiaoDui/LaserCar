@@ -1,0 +1,10 @@
+../Core/Src/DC.c:12:6:DC_Init	8	static
+../Core/Src/DC.c:33:6:BL_SetVelocity	24	static
+../Core/Src/DC.c:73:6:BR_SetVelocity	24	static
+../Core/Src/DC.c:113:6:SetVelocity	16	static
+../Core/Src/DC.c:164:6:GetVelocity	4	static
+../Core/Src/DC.c:223:6:DC_Turn	16	static
+../Core/Src/DC.c:257:6:DC_Forward	16	static
+../Core/Src/DC.c:268:6:DC_Backward	16	static
+../Core/Src/DC.c:280:6:DC_Start	16	static
+../Core/Src/DC.c:299:6:DC_Stop	4	static

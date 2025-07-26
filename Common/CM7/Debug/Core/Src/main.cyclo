@@ -1,0 +1,7 @@
+../Core/Src/main.c:104:6:HAL_UART_RxCpltCallback	7
+../Core/Src/main.c:173:10:Angle2CCR	1
+../Core/Src/main.c:180:6:ParseAndExecuteCommand	3
+../Core/Src/main.c:200:5:main	14
+../Core/Src/main.c:340:6:SystemClock_Config	4
+../Core/Src/main.c:401:6:MPU_Config	1
+../Core/Src/main.c:432:6:Error_Handler	1
