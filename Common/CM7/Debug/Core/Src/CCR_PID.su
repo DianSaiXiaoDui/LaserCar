@@ -1,6 +1,0 @@
-../Core/Src/CCR_PID.c:9:6:CCRX_PID_Init	80	static
-../Core/Src/CCR_PID.c:31:6:CCRY_PID_Init	80	static
-../Core/Src/CCR_PID.c:54:6:CCRX_PID_Update	4	static
-../Core/Src/CCR_PID.c:85:6:CCRY_PID_Update	4	static
-../Core/Src/CCR_PID.c:117:6:CCRX_PID_Reset	4	static
-../Core/Src/CCR_PID.c:123:6:CCRY_PID_Reset	4	static

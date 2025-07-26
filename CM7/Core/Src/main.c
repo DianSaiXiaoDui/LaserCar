@@ -180,10 +180,14 @@ uint16_t Angle2CCR(uint16_t MaxAngle,uint16_t Angle)
 void ParseAndExecuteCommand(const char* buffer) {
 	if (strncmp(buffer,"detect",6) == 0)
 	{
-		if (sscanf(buffer + 6, " targetX: %f currentX: %f targetY: %f currentY: %f", &targetX,&currentX,&targetY,&currentY) == 4)
+		if (sscanf(buffer + 6, " targetX: %f currentX: %f", &targetX,&currentX) == 2)
 		{
 			CCRX_PID.Target = targetX;
 			CCRX_PID.Current= currentX;
+			PIDflag = 1;
+		}
+		if (sscanf(buffer + 6, " targetY: %f currentY: %f", &targetY,&currentY) == 2)
+		{
 			CCRY_PID.Target = targetY;
 			CCRY_PID.Current= currentY;
 			PIDflag = 1;
