@@ -54,7 +54,7 @@
 
 
 uint16_t startAngleX = 90;
-uint16_t startAngleY = 90;
+uint16_t startAngleY = 70;
 
 uint16_t currentAngleX;
 uint16_t currentAngleY;
@@ -276,10 +276,10 @@ Error_Handler();
   MX_TIM4_Init();
   MX_UART4_Init();
   /* USER CODE BEGIN 2 */
+  HAL_TIM_PWM_Start(&htim4,TIM_CHANNEL_4);
   HAL_TIM_PWM_Start(&htim4,TIM_CHANNEL_3);
-  HAL_TIM_PWM_Start(&htim4,TIM_CHANNEL_2);
-  __HAL_TIM_SET_COMPARE(&htim4,TIM_CHANNEL_3,Angle2CCR(270,startAngleX));
-  __HAL_TIM_SET_COMPARE(&htim4,TIM_CHANNEL_2,Angle2CCR(180,startAngleY));
+  __HAL_TIM_SET_COMPARE(&htim4,TIM_CHANNEL_4,Angle2CCR(270,startAngleX));
+  __HAL_TIM_SET_COMPARE(&htim4,TIM_CHANNEL_3,Angle2CCR(180,startAngleY));
   currentCCRX = Angle2CCR(270,startAngleX);
   currentCCRY = Angle2CCR(180,startAngleY);
 
@@ -288,8 +288,8 @@ Error_Handler();
   HAL_UART_Receive_IT(&huart4, &ByteRcv4, 1);
 
 
-  CCRX_PID_Init(0.035,0,0,0,0,0,0.2,0,0,15,0,0,0,0,55,-55,0);
-  CCRY_PID_Init(0.035,0,0,0,0,0,0.2,0,0,15,0,0,0,0,55,-55,0);
+  CCRX_PID_Init(0.2,0,0,0,0,0,0.2,0,0,15,0,0,0,0,55,-55,0);
+  CCRY_PID_Init(0.15,0,0,0,0,0,0.2,0,0,15,0,0,0,0,55,-55,0);
   //HAL_UART_Transmit(&huart4,(uint8_t*)"Successfully initialized", 24, HAL_MAX_DELAY);
 
 
@@ -327,17 +327,17 @@ Error_Handler();
 	if (PIDflag)
 	{
 		CCRX_PID_Update();
-		CCRX_PID_Update();
-		currentCCRX = __HAL_TIM_GET_COMPARE(&htim4,TIM_CHANNEL_3);
-		currentCCRY = __HAL_TIM_GET_COMPARE(&htim4,TIM_CHANNEL_2);
+		CCRY_PID_Update();
+		currentCCRX = __HAL_TIM_GET_COMPARE(&htim4,TIM_CHANNEL_4);
+		currentCCRY = __HAL_TIM_GET_COMPARE(&htim4,TIM_CHANNEL_3);
 		currentCCRX += CCRX_PID.DeltaCCR;
-		currentCCRY += CCRY_PID.DeltaCCR;
-		currentCCRX = (currentCCRX < maxCCRX)? currentCCRX : maxCCRX;
-		currentCCRX = (currentCCRX > minCCRX)? currentCCRX : minCCRX;
-		currentCCRY = (currentCCRY < maxCCRY)? currentCCRY : maxCCRY;
-		currentCCRY = (currentCCRY > minCCRY)? currentCCRY : minCCRY;
-		__HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_3, currentCCRX);
-		__HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_2, currentCCRY);
+		currentCCRY -= CCRY_PID.DeltaCCR;
+//		currentCCRX = (currentCCRX < maxCCRX)? currentCCRX : maxCCRX;
+//		currentCCRX = (currentCCRX > minCCRX)? currentCCRX : minCCRX;
+//		currentCCRY = (currentCCRY < maxCCRY)? currentCCRY : maxCCRY;
+//		currentCCRY = (currentCCRY > minCCRY)? currentCCRY : minCCRY;
+		__HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_4, currentCCRX);
+		__HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_3, currentCCRY);
 		PIDflag = 0;
 	}
   }

@@ -53,6 +53,7 @@ void CCRY_PID_Init(float Kp,float Ki,float Kd,float P,float I, float D, float IT
 //全量式pid ,更新pid输出
 void CCRX_PID_Update(void)
 {
+	CCRX_PID.CurrentError = CCRX_PID.Target - CCRX_PID.Current;
 	if (CCRX_PID.Reset)
 	{
 		CCRX_PID.LastError = CCRX_PID.CurrentError;
@@ -84,6 +85,7 @@ void CCRX_PID_Update(void)
 
 void CCRY_PID_Update(void)
 {
+	CCRY_PID.CurrentError = CCRY_PID.Target - CCRY_PID.Current;
 	if (CCRY_PID.Reset)
 	{
 		CCRY_PID.LastError = CCRY_PID.CurrentError;
